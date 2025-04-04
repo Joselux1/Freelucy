@@ -4,15 +4,6 @@ import axios from "axios";
 export default function Services() {
   const [services, setServices] = useState([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:8000/api/services")
-      .then(response => {
-        setServices(response.data);
-      })
-      .catch(error => {
-        console.error("Error al obtener servicios:", error);
-      });
-  }, []);
 
   return (
     <div>
