@@ -17,16 +17,16 @@ export default function Login() {
     setError("");
 
     try {
-      // ✅ 1. Obtener token CSRF antes del login
+      // obtener token CSRF antes del login
       await api.get("/sanctum/csrf-cookie");
 
-      // ✅ 2. Enviar login
+      //  Enviar login
       await api.post("/login", form);
 
-      // ✅ 3. Verificar sesión
+      //  Verificar sesión
       const res = await api.get("/me");
 
-      console.log("✅ Usuario autenticado:", res.data);
+      console.log("Usuario autenticado:", res.data);
       alert("Sesión iniciada correctamente");
     } catch (err) {
       console.error("Error de login:", err);
