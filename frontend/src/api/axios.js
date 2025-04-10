@@ -1,9 +1,5 @@
-// src/api/axios.js
-
-
-
-
 import axios from 'axios';
+
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://localhost:8000";
 

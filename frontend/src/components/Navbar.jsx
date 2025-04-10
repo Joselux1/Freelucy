@@ -15,7 +15,7 @@ export default function Navbar() {
       } catch (err) {
         console.log("No hay usuario logueado");
       } finally {
-        setLoading(false); // 🔥 Importante para que se quite el spinner
+        setLoading(false); // para que se quite el spinner
       }
     };
 
@@ -28,7 +28,7 @@ export default function Navbar() {
       setUser(null);
       alert("Sesión cerrada correctamente");
     } catch (error) {
-      console.error("❌ Error al cerrar sesión:", error);
+      console.error(" Error al cerrar sesión:", error);
     }
   };
 

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import api from "../api/axios";
+import Swal from "sweetalert2"; 
 
 export default function Register() {
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    password_confirmation: "", // necesario para validación en backend
+    password_confirmation: "",
   });
   const [error, setError] = useState("");
 
@@ -14,22 +15,32 @@ export default function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Aquí está el handleSubmit que faltaba
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      await api.get("/sanctum/csrf-cookie"); // CSRF necesario para Laravel
+      await api.get("/sanctum/csrf-cookie");
+      await api.post("/register", form);
 
-      await api.post("/register", form); // Enviamos los datos del formulario
-
-      alert("✅ Registro exitoso");
-       window.location.href = "/login";
+      Swal.fire({
+        icon: "success",
+        title: "¡Registro exitoso!",
+        text: "Bienvenido a Freelucy 🎉",
+        confirmButtonColor: "#6366f1",
+      }).then(() => {
+        window.location.href = "/login"; // redirigir después de cerrar alerta
+      });
 
     } catch (err) {
       console.error("Error al registrar:", err);
-      setError(err.response?.data?.message || "Error al registrar usuario");
+
+      Swal.fire({
+        icon: "error",
+        title: "Uyy...",
+        text: err.response?.data?.message || "Error al registrar usuario",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
