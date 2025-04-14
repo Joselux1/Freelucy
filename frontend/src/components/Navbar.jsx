@@ -24,13 +24,14 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await api.post("/logout");
-      setUser(null);
-      alert("Sesión cerrada correctamente");
-    } catch (error) {
-      console.error(" Error al cerrar sesión:", error);
+      await api.post("/logout"); // Llama al backend para cerrar sesión
+      localStorage.removeItem("user"); // Limpia el usuario
+      window.location.reload(); // Recarga la app para que desaparezca el formulario
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
     }
-  };
+  }; 
+  
 
   return (
     <nav className="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-md">
