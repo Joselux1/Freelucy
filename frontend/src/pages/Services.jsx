@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Services() {
   const [services, setServices] = useState([]);
@@ -15,6 +16,11 @@ export default function Services() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const isFreelance = user?.role?.name === "freelance";
+  const navigate = useNavigate();
+
+  const goToDetail = (id) => {
+    navigate(`/services/${id}`);
+  };
 
   useEffect(() => {
     fetchServices();
@@ -121,10 +127,12 @@ export default function Services() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {services.map((service, index) => (
-          <div
+            <div
             key={`${service.id ?? index}-${Math.random()}`}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300"
-          >
+            onClick={() => goToDetail(service.id)}
+            className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300"
+            >
+
             <div className="relative">
               {service.image_url && (
                 <img
@@ -149,7 +157,10 @@ export default function Services() {
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-black">{service.price} €</span>
                 <button
-                  onClick={() => handleContract(service)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleContract(service);
+                  }}
                   className="text-sm text-violet-600 font-medium hover:underline"
                 >
                   Contratar
@@ -160,7 +171,6 @@ export default function Services() {
         ))}
       </div>
 
-      {/* Modal de contacto */}
       {showModal && selectedService && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">

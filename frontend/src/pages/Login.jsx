@@ -1,5 +1,7 @@
 import { useState } from "react";
 import api from "../api/axios";
+import Swal from "sweetalert2"; 
+
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -18,9 +20,28 @@ export default function Login() {
 
     try {
       await api.get("/sanctum/csrf-cookie");
-
       const res = await api.post("/login", form);
-      console.log("Login exitoso:", res.data);
+      
+      Swal.fire({
+        icon: "success",
+        title: "¡Acceso exitoso!",
+        text: "Bienvenido a Freelucy 🎉",
+        confirmButtonColor: "#6366f1",
+      }).then(() => {
+        window.location.href = "/"; // redirigir después de cerrar alerta
+      });
+
+    } catch (err) {
+      console.error("Error al registrar:", err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Uyy...",
+        text: err.response?.data?.message || "Error al ingresar usuario",
+        confirmButtonColor: "#ef4444",
+      });
+    }
+    try {
 
       // Guardamos directamente el usuario con su rol
       localStorage.setItem("user", JSON.stringify(res.data.user));
