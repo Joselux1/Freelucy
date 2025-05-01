@@ -166,6 +166,14 @@ export default function Services() {
                   Contratar
                 </button>
               </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/reviews/${service.id}`);
+                }}
+                className="text-violet-600 font-medium hover:underline">
+                Valoraciones
+              </button>
             </div>
           </div>
         ))}
@@ -177,6 +185,37 @@ export default function Services() {
             <h2 className="text-xl font-bold mb-4">Contactar con el anunciante</h2>
             <p className="mb-2"><strong>Usuario:</strong> {selectedService.user?.name || "Anónimo"}</p>
             <p className="mb-4"><strong>Email:</strong> {selectedService.user?.email || "No disponible"}</p>
+
+            <textarea
+              rows={4}
+              placeholder="Escribe tu mensaje o solicitud..."
+              className="w-full border rounded p-2 mb-4"
+              value={selectedService.comment || ""}
+              onChange={(e) =>
+                setSelectedService({ ...selectedService, comment: e.target.value })
+              }
+            />
+
+            <button
+              onClick={async () => {
+                try {
+                  const body = {
+                    receiver_id: selectedService.user.id,
+                    content: selectedService.comment,
+                  };
+                  await api.post("/api/messages", body);
+                  alert("Mensaje enviado correctamente ✅");
+                  setShowModal(false);
+                } catch (err) {
+                  console.error("Error al enviar mensaje:", err);
+                  alert("Error al enviar mensaje");
+                }
+              }}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded w-full mb-2"
+            >
+              Enviar mensaje
+            </button>
+
             <button
               onClick={() => setShowModal(false)}
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full"
@@ -186,6 +225,7 @@ export default function Services() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
