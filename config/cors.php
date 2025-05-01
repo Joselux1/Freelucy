@@ -2,8 +2,15 @@
 
 return [
 
-
-    'paths' => ['api/*', 'login', 'logout', 'sanctum/csrf-cookie', 'register', '/me'],
+    'paths' => [
+        'api/*',
+        'sanctum/csrf-cookie',
+        'login',
+        'logout',
+        'register',
+        'me',
+        'profile/*',
+    ],
 
     'allowed_methods' => ['*'],
 
@@ -20,3 +27,4 @@ return [
     'supports_credentials' => true,
 
 ];
+

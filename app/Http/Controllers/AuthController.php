@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use App\Models\Role;
 
+
 class AuthController extends Controller
 {
     // Registro
@@ -37,31 +38,25 @@ class AuthController extends Controller
     }
 
     // Login
+
+
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
         $credentials = $request->only('email', 'password');
-
+    
         if (!Auth::attempt($credentials)) {
-            throw ValidationException::withMessages([
-                'email' => ['Estas credenciales no coinciden con nuestros registros.'],
-            ]);
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
-
-        $request->session()->regenerate();
-
-        // Cargar el rol asociado al usuario autenticado
-        $user = User::with('role')->find(Auth::id());
-
+    
+        $user = Auth::user()->load('role');
+    
         return response()->json([
-            'message' => 'Inicio de sesión exitoso',
+            'message' => 'Login correcto',
             'user' => $user
         ]);
     }
+    
+    
 
     // Logout
     public function logout(Request $request)
