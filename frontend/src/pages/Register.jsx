@@ -54,7 +54,7 @@ export default function Register() {
           <div className="w-full md:w-1/2 py-10 px-5 md:px-10">
             <div className="text-center mb-10">
               <h1 className="font-bold text-3xl text-gray-900">Registro</h1>
-              <p>Enter your information to register</p>
+              <p>Ingresa tus datos para registrarte</p>
             </div>
             <form onSubmit={handleSubmit}>
               {error && <p className="text-red-500 mb-3">{error}</p>}
@@ -67,7 +67,7 @@ export default function Register() {
                     onChange={handleChange}
                     type="text"
                     className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
-                    placeholder="John"
+                    placeholder="Nombre"
                     required
                   />
                 </div>
@@ -81,7 +81,7 @@ export default function Register() {
                     onChange={handleChange}
                     type="email"
                     className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
-                    placeholder="johnsmith@example.com"
+                    placeholder="Ingrese su correo electrónico"
                     required
                   />
                 </div>
@@ -120,7 +120,7 @@ export default function Register() {
                     type="submit"
                     className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold"
                   >
-                    REGISTER NOW
+                    Registrarse ahora
                   </button>
                 </div>
               </div>

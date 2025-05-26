@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import Swal from "sweetalert2";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -9,7 +10,7 @@ export default function Profile() {
 
   useEffect(() => {
     api.get("/me").then((res) => {
-      const userData = res.data.user ?? res.data; // soporte para ambas formas
+      const userData = res.data.user ?? res.data;
       setUser(userData);
       setName(userData.name);
 
@@ -39,18 +40,24 @@ export default function Profile() {
 
       setUser(res.data.user);
       setPreview(`http://localhost:8000${res.data.user.avatar}`);
-      alert("¡Perfil actualizado correctamente!");
+      Swal.fire({
+        icon: "success",
+        title: "¡Perfil actualizado!",
+        text: "Tu perfil ha sido actualizado correctamente.",
+        confirmButtonColor: "#6366f1",
+      });
     } catch (err) {
-      console.error("❌ Error:", err);
-      alert(
-        "Error al actualizar el perfil.\n" +
-          (err.response?.data?.message ?? "Error desconocido")
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Uyy...",
+        text: err.response?.data?.message || "Error al actualizar el perfil",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded shadow">
+    <div className="max-w-xl mx-auto mt-32 p-6 bg-white rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Editar perfil</h2>
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">

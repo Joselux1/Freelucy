@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function Services() {
   const [services, setServices] = useState([]);
@@ -69,12 +70,32 @@ export default function Services() {
       setNewService({ title: "", description: "", price: "" });
       setImage(null);
       setVideo(null);
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Servicio publicado!",
+        text: "Tu servicio ha sido creado correctamente.",
+        confirmButtonColor: "#6366f1",
+      });
     } catch (error) {
       if (error.response?.status === 422) {
-        console.log("Errores de validación:", error.response.data.errors);
-        alert("Errores:\n" + JSON.stringify(error.response.data.errors, null, 2));
+        const errores = Object.values(error.response.data.errors)
+          .map((err) => `• ${err.join(", ")}`)
+          .join("<br>");
+        Swal.fire({
+          icon: "error",
+          title: "Error de validación",
+          html: errores,
+          confirmButtonColor: "#ef4444",
+        });
       } else {
         console.error("Error general:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error inesperado",
+          text: "Ocurrió un error al crear el servicio.",
+          confirmButtonColor: "#ef4444",
+        });
       }
     }
   };
@@ -85,10 +106,10 @@ export default function Services() {
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 pt-32 pb-16">
       <h1 className="text-3xl font-bold mb-6 text-center">Servicios disponibles</h1>
 
-      {isFreelance && (
+      {user && isFreelance && (
         <form onSubmit={handleCreateService} className="bg-white shadow-md rounded p-6 mb-10 max-w-xl mx-auto">
           <h2 className="text-xl font-semibold mb-4 text-center">Sube tu servicio</h2>
           <input
@@ -117,32 +138,72 @@ export default function Services() {
             className="w-full mb-4 p-2 border rounded"
             required
           />
-          <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="w-full mb-4" />
-          <input type="file" accept="video/*" onChange={(e) => setVideo(e.target.files[0])} className="w-full mb-4" />
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Imagen del servicio:</label>
+            <div className="relative">
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+              <label
+                htmlFor="image-upload"
+                className="cursor-pointer inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-4 rounded transition"
+              >
+                Seleccionar imagen
+              </label>
+              {image && <span className="ml-2 text-sm text-gray-700">{image.name}</span>}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Video opcional:</label>
+            <div className="relative">
+              <input
+                id="video-upload"
+                type="file"
+                accept="video/*"
+                className="hidden"
+                onChange={(e) => setVideo(e.target.files[0])}
+              />
+              <label
+                htmlFor="video-upload"
+                className="cursor-pointer inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-4 rounded transition"
+              >
+                Seleccionar video
+              </label>
+              {video && <span className="ml-2 text-sm text-gray-700">{video.name}</span>}
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 w-full"
+          >
             Publicar servicio
           </button>
         </form>
       )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {services.map((service, index) => (
-            <div
+          <div
             key={`${service.id ?? index}-${Math.random()}`}
             onClick={() => goToDetail(service.id)}
             className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300"
-            >
-
-            <div className="relative">
+          >
+            <div className="relative w-full h-48 bg-gray-100">
               {service.image_url && (
                 <img
                   src={`http://localhost:8000${service.image_url}`}
                   alt={service.title}
-                  className="w-full h-44 object-cover"
+                  className="w-full h-full object-cover rounded-t-lg"
                 />
               )}
               {service.video_url && (
-                <video controls className="w-full h-44 object-cover">
+                <video controls className="w-full h-full object-cover rounded-t-lg">
                   <source src={`http://localhost:8000${service.video_url}`} type="video/mp4" />
                 </video>
               )}
@@ -161,7 +222,7 @@ export default function Services() {
                     e.stopPropagation();
                     handleContract(service);
                   }}
-                  className="text-sm text-violet-600 font-medium hover:underline"
+                  className="text-white bg-emerald-500 hover:bg-emerald-600 font-medium py-1 px-3 rounded transition-all duration-200"
                 >
                   Contratar
                 </button>
@@ -171,13 +232,15 @@ export default function Services() {
                   e.stopPropagation();
                   navigate(`/reviews/${service.id}`);
                 }}
-                className="text-violet-600 font-medium hover:underline">
+                className="text-violet-600 font-medium hover:underline mt-2"
+              >
                 Valoraciones
               </button>
             </div>
           </div>
         ))}
       </div>
+
 
       {showModal && selectedService && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -204,11 +267,11 @@ export default function Services() {
                     content: selectedService.comment,
                   };
                   await api.post("/api/messages", body);
-                  alert("Mensaje enviado correctamente ✅");
+                  Swal.fire("¡Enviado!", "Mensaje enviado correctamente ✅", "success");
                   setShowModal(false);
                 } catch (err) {
                   console.error("Error al enviar mensaje:", err);
-                  alert("Error al enviar mensaje");
+                  Swal.fire("Error", "No se pudo enviar el mensaje", "error");
                 }
               }}
               className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded w-full mb-2"
@@ -225,7 +288,6 @@ export default function Services() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
