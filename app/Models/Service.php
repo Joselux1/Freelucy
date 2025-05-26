@@ -10,7 +10,8 @@ class Service extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'price', 'image', 'video', 'user_id'];
+    // Campos que pueden ser llenados de forma masiva
+    protected $fillable = ['title', 'description', 'price', 'image_url', 'video_url', 'user_id'];
 
     // Relación: un servicio pertenece a un usuario
     public function user()
@@ -18,7 +19,7 @@ class Service extends Model
         return $this->belongsTo(User::class);
     }
 
-   
+    // Relación: un servicio puede tener muchas reseñas
     public function reviews()
     {
         return $this->hasMany(Review::class);

@@ -15,6 +15,8 @@ class VerifyCsrfToken extends Middleware
         'register',
         'login',
         'logout',
+        'api/chatbot',
+
         //
     ];
 }

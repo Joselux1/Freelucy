@@ -7,6 +7,9 @@ use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\BotController;
+
 
 
 /*
@@ -49,8 +52,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/messages/sent', [MessageController::class, 'sent']);
 });
 
-
-
+    
+// routes/api.php
+Route::get('/search', [SearchController::class, 'search']);
 
 Route::middleware('auth:sanctum')->post('/profile/update', [UserController::class, 'update']);
+
+// BOT
+Route::post('/chatbot', [BotController::class, 'respond']);
 
