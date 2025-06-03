@@ -230,7 +230,7 @@ export default function Services() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/reviews/${service.id}`);
+                  navigate(`/services/${service.id}`);
                 }}
                 className="text-violet-600 font-medium hover:underline mt-2"
               >
