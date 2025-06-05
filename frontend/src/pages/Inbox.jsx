@@ -9,6 +9,7 @@ export default function Inbox() {
 
   useEffect(() => {
     fetchMessages();
+    markMessagesAsRead();
   }, []);
 
   const fetchMessages = async () => {
@@ -19,6 +20,14 @@ export default function Inbox() {
       console.error("Failed to load messages:", err);
     }
   };
+const markMessagesAsRead = async () => {
+  try {
+    await api.post("/api/messages/mark-as-read", {}, { withCredentials: true });
+    localStorage.setItem("messagesRead", "true"); // notifica al navbar
+  } catch (err) {
+    console.error("Error al marcar como leídos:", err);
+  }
+};
 
   const handleReply = async (receiverId) => {
     if (!replyContent.trim()) {

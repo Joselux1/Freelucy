@@ -104,6 +104,31 @@ export default function Services() {
     setSelectedService(service);
     setShowModal(true);
   };
+const handleDeleteService = async (serviceId, e) => {
+  e.stopPropagation();
+
+  try {
+    await api.delete(`/api/services/${serviceId}`, { withCredentials: true });
+
+    Swal.fire({
+      icon: "success",
+      title: "Eliminado",
+      text: "El servicio fue eliminado correctamente.",
+    });
+
+    fetchServices(); // Actualiza la lista
+  } catch (error) {
+    console.error("Error al eliminar servicio:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo eliminar el servicio.",
+    });
+  }
+};
+
+
 
   return (
     <div className="container mx-auto px-4 pt-32 pb-16">
@@ -217,16 +242,33 @@ export default function Services() {
               <p className="text-sm text-gray-500 line-clamp-2 mb-3">{service.description}</p>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-black">{service.price} €</span>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleContract(service);
-                  }}
-                  className="text-white bg-emerald-500 hover:bg-emerald-600 font-medium py-1 px-3 rounded transition-all duration-200"
-                >
-                  Contratar
-                </button>
+
+                <div className="flex gap-x-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleContract(service);
+                    }}
+                    className="text-white bg-emerald-500 hover:bg-emerald-600 font-medium py-1 px-3 rounded transition-all duration-200"
+                  >
+                    Contratar
+                  </button>
+
+                  {isFreelance && service.user?.id === user?.id && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteService(service.id, e);
+                      }}
+                      className="text-white bg-red-500 hover:bg-red-600 font-medium py-1 px-3 rounded transition-all duration-200"
+                    >
+                      Eliminar
+                    </button>
+                  )}
+                </div>
               </div>
+
+
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -289,5 +331,6 @@ export default function Services() {
         </div>
       )}
     </div>
+    
   );
 }

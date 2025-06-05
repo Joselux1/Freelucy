@@ -20,7 +20,8 @@ export default function Navbar() {
         setUser(res.data);
 
         const msgRes = await api.get("/api/messages/received");
-        setHasMessages(msgRes.data.length > 0);
+        const unread = msgRes.data.some(msg => !msg.read);
+        setHasMessages(unread);
       } catch {
         console.log("Usuario no autenticado");
       } finally {
@@ -29,13 +30,24 @@ export default function Navbar() {
     };
 
     fetchUserAndMessages();
+
+    // Escucha si desde Inbox se han marcado como leídos
+    const checkIfRead = setInterval(() => {
+      if (localStorage.getItem("messagesRead") === "true") {
+        setHasMessages(false);
+        localStorage.removeItem("messagesRead");
+      }
+    }, 500);
+
+    return () => clearInterval(checkIfRead);
   }, []);
 
   const handleLogout = async () => {
     try {
-      await api.post("/logout");
+      await api.post("/logout", {}, { withCredentials: true });
       localStorage.removeItem("user");
-      window.location.reload();
+      setUser(null);
+      navigate("/");
     } catch (err) {
       console.error("Error al cerrar sesión:", err);
     }
@@ -71,12 +83,14 @@ export default function Navbar() {
                 <FiMenu />
               </button>
 
+              {/* ICONO DE MENSAJE */}
               {hasMessages && (
                 <button
                   onClick={() => {
                     navigate("/inbox");
                     setHasMessages(false);
                     setShowMenu(false);
+                    localStorage.setItem("messagesRead", "true");
                   }}
                   className="relative focus:outline-none"
                   title="Tienes mensajes nuevos"
@@ -98,6 +112,7 @@ export default function Navbar() {
                       navigate("/inbox");
                       setHasMessages(false);
                       setShowMenu(false);
+                      localStorage.setItem("messagesRead", "true");
                     }}
                     className="w-full text-left px-4 py-2 hover:bg-gray-100"
                   >
@@ -115,7 +130,6 @@ export default function Navbar() {
           ) : (
             <>
               <Link to="/login" className="hover:text-[#34d399] transition">Login</Link>
-              {/* <Link to="/register" className="hover:text-[#34d399] transition">Registro</Link> */}
             </>
           )}
         </div>
